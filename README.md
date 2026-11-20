@@ -3,6 +3,26 @@
 Small games and experiments, playable in the browser.
 Live: https://razanmdr.github.io/playground/
 
+## ♞ Chess rules engine
+
+Movement and capture rules for all six piece types (no check/castling/promotion),
+modelled with OOP pieces and a validation chain. The browser UI runs the exact
+Python module via Pyodide; **Test mode** loads prepared positions and runs
+`test_chess.py` in the page.
+
+```
+chess/
+├── chess.py        # rules: pieces, board, validation chain, game (+ terminal CLI)
+├── scenarios.py    # prepared positions for test mode
+├── test_chess.py   # unit tests
+├── bridge.py       # JSON-friendly functions for the browser
+└── index.html, game.js   # UI: drawing and input only
+```
+
+- **One validation chain** for everything: selecting a piece runs the first three
+  checks, playing a move runs all six; the failing check's name is shown as the error code.
+- **Undo** keeps a board snapshot per move in `Game.history`.
+
 ## 🐍 Snake
 
 A 1–2 player Snake. The game rules are a plain Python module; the browser
