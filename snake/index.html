@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Snake · Python in the browser</title>
+<link rel="icon" href="assets/apple.png">
+<style>
+  :root { --bg:#1d2b17; --bar:#4a752c; --ink:#f2f7ea; --muted:#b9c9a8; --p1:#7ff0e6; --p2:#ffc070; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+         font-family: system-ui, -apple-system, "Segoe UI", Helvetica, sans-serif; }
+  main { max-width: 1260px; margin: 0 auto; padding: 16px; }
+  header { display:flex; flex-wrap:wrap; align-items:center; gap:12px; justify-content:space-between; margin-bottom:12px; }
+  h1 { font-size: 22px; margin:0; }
+  h1 small { font-weight: 400; color: var(--muted); font-size: 14px; margin-left: 6px; }
+  .modes button { background:transparent; color:var(--ink); border:2px solid var(--bar);
+                  padding:6px 14px; border-radius:999px; font-weight:600; cursor:pointer; }
+  .modes button.active { background: var(--bar); }
+  .hud { display:flex; justify-content:space-between; align-items:center; background:var(--bar);
+         padding:10px 16px; border-radius:12px 12px 0 0; font-weight:700; font-size:18px; }
+  .hud img { width:18px; vertical-align:-3px; margin-right:6px; }
+  #s1 { color: var(--p1); } #s2 { color: var(--p2); } #best { color: var(--ink); font-weight:600; font-size:15px; }
+  .stage { position:relative; line-height:0; }
+  canvas { width:100%; height:auto; display:block; border-radius:0 0 12px 12px; touch-action:none; }
+  #overlay { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; line-height:1.4; }
+  #overlay[hidden] { display:none; }
+  .panel { background:rgba(20,40,20,.85); border:3px solid rgba(255,255,255,.9); border-radius:20px;
+           padding:24px 36px; text-align:center; max-width:90%; }
+  .panel h2 { margin:0 0 6px; font-size: clamp(28px, 6vw, 52px); }
+  .panel p { margin:4px 0; color:#e8f5d0; font-size: clamp(13px, 2.2vw, 18px); }
+  .panel button { margin-top:12px; font-size:16px; font-weight:700; padding:10px 22px; border-radius:999px;
+                  border:0; background:#f2c94c; color:#1d2b17; cursor:pointer; }
+  .pad { display:none; grid-template-columns:repeat(3,64px); gap:8px; justify-content:center; margin:16px auto 0; }
+  .pad button { height:64px; font-size:24px; border-radius:14px; border:0; background:var(--bar); color:var(--ink); }
+  .pad .up { grid-column:2; } .pad .left { grid-column:1; grid-row:2; }
+  .pad .down { grid-column:2; grid-row:2; } .pad .right { grid-column:3; grid-row:2; }
+  @media (hover:none) and (pointer:coarse) { .pad { display:grid; } }
+  @media (max-width: 600px) { .panel { padding:12px 16px; border-width:2px; } .panel button { margin-top:6px; padding:8px 16px; } }
+  footer { margin-top:16px; color:var(--muted); font-size:14px; line-height:1.6; }
+  footer a { color: var(--ink); }
+  kbd { background:#33452a; border-radius:4px; padding:1px 6px; font-size:13px; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>🐍 Snake <small>game logic in Python, running in your browser</small></h1>
+    <div class="modes">
+      <button data-players="1" class="active">1 Player</button>
+      <button data-players="2">2 Players</button>
+    </div>
+  </header>
+
+  <div class="hud">
+    <span id="s1"><img src="assets/apple.png" alt="">Turquoise: 0</span>
+    <span id="best"></span>
+    <span id="s2"><img src="assets/apple.png" alt="">Orange: 0</span>
+  </div>
+  <div class="stage">
+    <canvas id="board" width="1260" height="720"></canvas>
+    <div id="overlay"><div class="panel"><h2 id="title">Loading…</h2><p id="sub">Starting Python (Pyodide)</p>
+      <button id="action" hidden>Start</button></div></div>
+  </div>
+
+  <div class="pad" aria-label="Controls">
+    <button class="up" data-dir="UP">▲</button><button class="left" data-dir="LEFT">◀</button>
+    <button class="down" data-dir="DOWN">▼</button><button class="right" data-dir="RIGHT">▶</button>
+  </div>
+
+  <footer>
+    <p><b>Controls:</b> 1 player: <kbd>←↑↓→</kbd> or <kbd>WASD</kbd> or swipe ·
+       2 players: Turquoise <kbd>←↑↓→</kbd>, Orange <kbd>WASD</kbd> · <kbd>Space</kbd> start / restart</p>
+    <p><b>How it works:</b> the rules (movement, collisions, food) live in
+       <a href="snake_model.py" target="_blank">snake_model.py</a>, a plain Python module with
+       unit tests. In the browser it runs via <a href="https://pyodide.org" target="_blank">Pyodide</a>
+       (Python compiled to WebAssembly); JavaScript only handles input and drawing.
+       The same model also powers a desktop version (<code>snake.py</code>, tkinter).</p>
+  </footer>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/pyodide@314.0.8/pyodide.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
